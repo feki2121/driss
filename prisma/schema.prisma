@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  slug      String    @unique
+  nameFr    String
+  nameAr    String
+  image     String
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Product {
+  id          String    @id @default(cuid())
+  ref         String    @unique
+  nameFr      String
+  nameAr      String
+  descriptionFr String
+  descriptionAr String
+  price       Decimal   @db.Decimal(10, 2)
+  promoPrice  Decimal?  @db.Decimal(10, 2)
+  images      Json
+  stock       Int       @default(0)
+  isNew       Boolean   @default(false)
+  isActive    Boolean   @default(true)
+  categoryId  String
+  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  orderItems  OrderItem[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([categoryId])
+  @@index([isActive])
+}
+
+enum OrderStatus {
+  NEW
+  CONFIRMED
+  PREPARING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model Order {
+  id         String      @id @default(cuid())
+  number     String      @unique
+  fullName   String
+  phone1     String
+  phone2     String?
+  address    String
+  total      Decimal     @db.Decimal(10, 2)
+  status     OrderStatus @default(NEW)
+  items      OrderItem[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id          String   @id @default(cuid())
+  orderId     String
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+  productNameFr String
+  productNameAr String
+  unitPrice   Decimal  @db.Decimal(10, 2)
+  image       String
+  quantity    Int
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model StoreSettings {
+  id                  String   @id @default(cuid())
+  storeName           String   @default("Espace Baya")
+  email               String?
+  phone               String?
+  address             String?
+  deliveryFee         Decimal  @default(0) @db.Decimal(10, 2)
+  freeDeliveryThreshold Decimal? @db.Decimal(10, 2)
+  whatsapp             String?
+  currency             String   @default("DZD")
+  updatedAt           DateTime @updatedAt
+}

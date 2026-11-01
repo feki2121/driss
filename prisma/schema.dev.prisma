@@ -1,0 +1,108 @@
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Admin {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  slug      String    @unique
+  nameFr    String
+  nameAr    String
+  image     String
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Product {
+  id            String      @id @default(cuid())
+  ref           String      @unique
+  nameFr        String
+  nameAr        String
+  descriptionFr String
+  descriptionAr String
+  price         Float
+  promoPrice    Float?
+  images        Json
+  stock         Int         @default(0)
+  isNew          Boolean     @default(false)
+  isActive       Boolean     @default(true)
+  categoryId     String
+  category       Category    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  orderItems     OrderItem[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@index([categoryId])
+  @@index([isActive])
+}
+
+enum OrderStatus {
+  NEW
+  CONFIRMED
+  PREPARING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model Order {
+  id        String      @id @default(cuid())
+  number    String      @unique
+  fullName  String
+  phone1    String
+  phone2    String?
+  address   String
+  total     Float
+  status    OrderStatus @default(NEW)
+  items     OrderItem[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id            String   @id @default(cuid())
+  orderId       String
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+  productNameFr String
+  productNameAr String
+  unitPrice     Float
+  image         String
+  quantity      Int
+  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model StoreSettings {
+  id                    String   @id @default(cuid())
+  storeName             String   @default("Espace Baya")
+  email                 String?
+  phone                 String?
+  address               String?
+  deliveryFee           Float    @default(0)
+  freeDeliveryThreshold Float?
+  whatsapp              String?
+  currency              String   @default("DZD")
+  updatedAt             DateTime @updatedAt
+}

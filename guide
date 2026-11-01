@@ -1,0 +1,86 @@
+Étape 1 : Développement local (SQLite)
+# Vous modifiez schema.dev.prisma
+# Puis vous faites :
+npm run db:push
+npm run db:studio
+npm run dev
+Étape 2 : Mettre en production
+# 1. Copiez les modifications de schema.dev.prisma vers schema.prisma
+#    (ouvrez les 2 fichiers et copiez les changements)
+
+# 2. Appliquez sur la vraie base (Neon)
+npx prisma studio
+npx prisma db push --schema=prisma/schema.prisma
+
+
+
+***********************************
+
+# Développement local
+npm run db:push        # 1. Met à jour la base SQLite
+npm run dev            # 2. Lance le projet
+
+# Pour voir les données dans Prisma Studio
+npm run db:studio      # Ouvre une interface web
+Pour la production (Neon) :
+Pas besoin de script. Utilisez cette commande directement :
+
+bash
+npx prisma db push --schema=prisma/schema.prisma
+
+
+
+
+***********************************
+
+// vider la bdd :
+DO $$ 
+DECLARE
+    r RECORD;
+BEGIN
+    FOR r IN (
+        SELECT tablename 
+        FROM pg_tables 
+        WHERE schemaname = 'public' 
+        AND tablename != 'User'
+    )
+    LOOP
+        EXECUTE 'TRUNCATE TABLE "' || r.tablename || '" RESTART IDENTITY CASCADE';
+    END LOOP;
+END $$;
+
+
+
+
+
+***********************************
+
+Si tu veux absolument garder schema.dev.prisma
+
+À chaque fois que tu veux travailler en SQLite, il faut régénérer Prisma :
+
+npx prisma generate --schema=prisma/schema.dev.prisma
+
+Puis lancer l'application.
+
+Et pour revenir sur Neon :
+
+npx prisma generate --schema=prisma/schema.prisma
+
+Puis :
+
+npm run dev
+
+
+
+
+
+
+***********************************
+Si tu veux vérifier l’email global (le plus utilisé)
+
+git config --global user.email
+
+Changer l’email global
+
+git config --global user.email "feki32642@gmail.com"

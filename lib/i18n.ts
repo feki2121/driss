@@ -130,6 +130,17 @@ const fr: Dict = {
   'confirm.home': "Retour à l'accueil",
   'confirm.shop': 'Continuer les achats',
 
+  'admin.categories.edit': 'Éditer la catégorie',
+  'admin.categories.delete': 'Supprimer la catégorie',
+  'admin.categories.add': 'Ajouter une catégorie',
+  'admin.categories.slug': 'Identifiant (slug)',
+  'admin.categories.products': 'Produits',
+  'admin.form.addCategory': 'Ajouter une catégorie',
+  'admin.form.selectCategory': 'Sélectionner une catégorie',
+
+  'admin.orders.updateStatus': 'Mettre à jour le statut',
+  'admin.orders.allStatuses': 'Tous les statuts',
+
   'admin.login.title': 'Espace Administration',
   'admin.login.subtitle': 'Connectez-vous pour gérer votre boutique',
   'admin.login.email': 'Email',
@@ -375,6 +386,16 @@ const ar: Dict = {
   'confirm.home': 'العودة إلى الرئيسية',
   'confirm.shop': 'مواصلة التسوق',
 
+  'admin.categories.edit': 'تعديل الفئة',
+  'admin.categories.delete': 'حذف الفئة',
+  'admin.categories.add': 'إضافة فئة',
+  'admin.categories.slug': 'المعرّف (slug)',
+  'admin.form.addCategory': 'إضافة فئة',
+  'admin.form.selectCategory': 'تحديد فئة',
+
+  'admin.orders.updateStatus': 'تحديث الحالة',
+  'admin.orders.allStatuses': 'جميع الحالات',
+  
   'admin.login.title': 'مساحة الإدارة',
   'admin.login.subtitle': 'سجّل الدخول لإدارة متجرك',
   'admin.login.email': 'البريد الإلكتروني',

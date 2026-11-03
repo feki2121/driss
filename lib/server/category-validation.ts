@@ -1,19 +1,20 @@
 import { isString } from '@/lib/server/api'
 
 export function parseCategoryInput(value: Record<string, unknown>) {
-  const name = value.name as Record<string, unknown> | undefined
-  if (
-    !isString(value.slug, 100) ||
-    !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value.slug) ||
-    !name || !isString(name.fr, 200) || !isString(name.ar, 200) ||
-    !isString(value.image, 2048) ||
-    !(value.image.startsWith('/') && !value.image.startsWith('//')) &&
-      !/^https:\/\//i.test(value.image)
-  ) return null
+  const name = (value.name ?? {}) as Record<string, unknown>
+
+  const error =
+    !isString(name.fr, 100) ? 'Le nom (FR) est requis (100 caractères max).' :
+    !isString(name.ar, 100) ? 'Le nom (AR) est requis (100 caractères max).' :
+    null
+
+  if (error) return { ok: false as const, error }
+
   return {
-    slug: value.slug,
-    nameFr: name.fr.trim(),
-    nameAr: name.ar.trim(),
-    image: value.image,
+    ok: true as const,
+    data: {
+      nameFr: (name.fr as string).trim(),
+      nameAr: (name.ar as string).trim(),
+    },
   }
 }

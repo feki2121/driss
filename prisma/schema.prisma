@@ -18,10 +18,10 @@ model Admin {
 
 model Category {
   id        String    @id @default(cuid())
-  slug      String    @unique
+  // slug      String    @unique
   nameFr    String
   nameAr    String
-  image     String
+  // image     String
   products  Product[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt

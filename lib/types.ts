@@ -7,9 +7,9 @@ export type LocalizedText = {
 
 export type Category = {
   id: string
-  slug: string
+  // slug: string
   name: LocalizedText
-  image: string
+  // image: string
 }
 
 export type Product = {

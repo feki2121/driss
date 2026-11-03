@@ -17,7 +17,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import type { Category } from '@/lib/types'
 
-type FormState = { nameFr: string; nameAr: string; slug: string }
+type FormState = { nameFr: string; nameAr: string }
 
 export function CategoriesManager() {
   const { t, tf } = useLanguage()
@@ -35,7 +35,7 @@ export function CategoriesManager() {
   const [form, setForm] = useState<FormState>({
     nameFr: '',
     nameAr: '',
-    slug: '',
+    // slug: '',
   })
 
   const count = (id: string) =>
@@ -43,13 +43,13 @@ export function CategoriesManager() {
 
   const openNew = () => {
     setEditing(null)
-    setForm({ nameFr: '', nameAr: '', slug: '' })
+    setForm({ nameFr: '', nameAr: ''})
     setDialogOpen(true)
   }
 
   const openEdit = (c: Category) => {
     setEditing(c)
-    setForm({ nameFr: c.name.fr, nameAr: c.name.ar, slug: c.slug })
+    setForm({ nameFr: c.name.fr, nameAr: c.name.ar })
     setDialogOpen(true)
   }
 
@@ -58,8 +58,6 @@ export function CategoriesManager() {
       toast.error(t('checkout.required'))
       return
     }
-    const slug =
-      form.slug.trim() ||
       form.nameFr
         .trim()
         .toLowerCase()
@@ -67,8 +65,8 @@ export function CategoriesManager() {
         .replace(/(^-|-$)/g, '')
     const payload = {
       name: { fr: form.nameFr.trim(), ar: form.nameAr.trim() || form.nameFr.trim() },
-      slug,
-      image: editing?.image ?? '/products/showroom.png',
+      // slug,
+      // image: editing?.image ?? '/products/showroom.png',
     }
     setSaving(true)
     try {
@@ -179,7 +177,7 @@ export function CategoriesManager() {
                 }
               />
             </div>
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label htmlFor="cslug">{t('admin.categories.slug')}</Label>
               <Input
                 id="cslug"
@@ -189,7 +187,7 @@ export function CategoriesManager() {
                 }
                 placeholder="salon"
               />
-            </div>
+            </div> */}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>

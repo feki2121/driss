@@ -60,13 +60,15 @@ const StoreContext = createContext<StoreContextValue | null>(null)
 
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
   const headers = new Headers(init?.headers)
+  let response: Response
   if (init?.body && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json')
   }
-  const response = await fetch(url, {
-    ...init,
-    headers,
-  })
+  try {
+  response = await fetch(url, { ...init, headers })
+} catch {
+  throw new Error('Connexion impossible. Vérifiez votre réseau.')
+}
   const body = (await response.json().catch(() => null)) as
     | T
     | { error?: string }

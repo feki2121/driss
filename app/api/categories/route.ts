@@ -18,10 +18,13 @@ export async function POST(request: NextRequest) {
   try {
     if (hasCrossOrigin(request)) return apiError('Requête inter-origine refusée.', 403)
     if (!(await getAdminFromRequest(request))) return apiError('Authentification requise.', 401)
-    const body = await readJson(request)
-    const input = body ? parseCategoryInput(body) : null
-    if (!input) return apiError('Les données de la catégorie sont invalides.', 400)
-    const category = await prisma.category.create({ data: input })
+     const body = await readJson(request)
+    if (!body) return apiError('Corps de requête JSON invalide.', 400)
+
+    const result = parseCategoryInput(body)
+    if (!result.ok) return apiError(result.error, 422)
+
+    const category = await prisma.category.create({ data: result.data })
     return NextResponse.json(serializeCategory(category), { status: 201 })
   } catch (error) {
     return reportApiError(error)

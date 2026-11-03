@@ -26,11 +26,14 @@ export async function PATCH(request: NextRequest, id: string) {
       name: { ...current.name, ...incomingName },
       description: { ...current.description, ...incomingDescription },
     }
-    const data = parseProductInput(merged)
-    if (!data) return apiError('Les données du produit sont invalides.', 400)
-    const product = await prisma.product.update({ where: { id }, data })
+    const result = parseProductInput(merged)
+    if (!result.ok) return apiError(result.error, 422)
+    const product = await prisma.product.update({ where: { id }, data: result.data })
     return NextResponse.json(serializeProduct(product))
   } catch (error) {
-    return reportApiError(error)
+    return reportApiError(error, {
+      P2002: { message: 'Cette référence est déjà utilisée.' },
+      P2003: { message: 'Cette catégorie n’existe pas.', status: 400 },
+    })
   }
 }

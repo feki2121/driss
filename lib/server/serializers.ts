@@ -13,9 +13,9 @@ const statusToClient: Record<DbOrder['status'], OrderStatus> = {
 export function serializeCategory(category: DbCategory): Category {
   return {
     id: category.id,
-    slug: category.slug,
+    // slug: category.slug,
     name: { fr: category.nameFr, ar: category.nameAr },
-    image: category.image,
+    // image: category.image,
   }
 }
 

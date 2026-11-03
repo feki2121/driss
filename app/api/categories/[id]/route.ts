@@ -29,8 +29,8 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     if (!body) return apiError('Les données de la catégorie sont invalides.', 400)
     const name = body.name ?? { fr: existing.nameFr, ar: existing.nameAr }
     const input = parseCategoryInput({
-      slug: body.slug ?? existing.slug,
-      image: body.image ?? existing.image,
+      // slug: body.slug ?? existing.slug,
+      // image: body.image ?? existing.image,
       name,
     })
     if (!input) return apiError('Les données de la catégorie sont invalides.', 400)

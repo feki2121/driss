@@ -22,12 +22,19 @@ export async function POST(request: NextRequest) {
   try {
     if (hasCrossOrigin(request)) return apiError('Requête inter-origine refusée.', 403)
     if (!(await getAdminFromRequest(request))) return apiError('Authentification requise.', 401)
+
     const body = await readJson(request)
-    const input = body ? parseProductInput(body) : null
-    if (!input) return apiError('Les données du produit sont invalides.', 400)
-    const product = await prisma.product.create({ data: input })
+    if (!body) return apiError('Corps de requête JSON invalide.', 400)
+
+    const result = parseProductInput(body)
+    if (!result.ok) return apiError(result.error, 422)
+
+    const product = await prisma.product.create({ data: result.data })
     return NextResponse.json(serializeProduct(product), { status: 201 })
   } catch (error) {
-    return reportApiError(error)
+    return reportApiError(error, {
+      P2002: { message: 'Cette référence est déjà utilisée.' },
+      P2003: { message: 'Cette catégorie n’existe pas.', status: 400 },
+    })
   }
 }

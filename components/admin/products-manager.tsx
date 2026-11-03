@@ -23,6 +23,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectSeparator,
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
@@ -35,6 +36,9 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import type { Product } from '@/lib/types'
+import { useRouter } from 'next/navigation'
+import {  } from '@/components/ui/select'
+import { ImageUploader } from '@/components/admin/image-uploader'
 
 type FormState = {
   nameFr: string
@@ -46,7 +50,7 @@ type FormState = {
   categoryId: string
   stock: string
   ref: string
-  images: string
+  images: string[]
   isNew: boolean
   isActive: boolean
 }
@@ -58,10 +62,10 @@ const emptyForm = (categoryId: string): FormState => ({
   descAr: '',
   price: '',
   promoPrice: '',
-  categoryId,
+  categoryId:'',
   stock: '0',
   ref: '',
-  images: '',
+  images: [],
   isNew: false,
   isActive: true,
 })
@@ -76,11 +80,15 @@ export function ProductsManager() {
     deleteProduct,
   } = useStore()
 
+const ADD_CATEGORY = '__add_category__'
+const router = useRouter()
+
   const [search, setSearch] = useState('')
   const [dialogOpen, setDialogOpen] = useState(false)
   const [saving, setSaving] = useState(false)
   const [editing, setEditing] = useState<Product | null>(null)
-  const [form, setForm] = useState<FormState>(emptyForm(categories[0]?.id ?? ''))
+  const [form, setForm] = useState<FormState>(emptyForm(''))
+  const [uploading, setUploading] = useState(false)
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
@@ -95,7 +103,7 @@ export function ProductsManager() {
 
   const openNew = () => {
     setEditing(null)
-    setForm(emptyForm(categories[0]?.id ?? ''))
+    setForm(emptyForm(''))
     setDialogOpen(true)
   }
 
@@ -111,7 +119,7 @@ export function ProductsManager() {
       categoryId: product.categoryId,
       stock: String(product.stock),
       ref: product.ref,
-      images: product.images.join(', '),
+      images: product.images,
       isNew: product.isNew,
       isActive: product.isActive,
     })
@@ -127,14 +135,12 @@ export function ProductsManager() {
     setForm((f) => ({ ...f, [key]: value }))
 
   const handleSave = async () => {
-    if (!form.nameFr.trim() || !form.price) {
-      toast.error(t('checkout.required'))
-      return
-    }
-    const images = form.images
-      .split(',')
-      .map((s) => s.trim())
-      .filter(Boolean)
+    if (!form.nameFr.trim()) return toast.error('Le nom (FR) est requis.')
+    if (!form.price || Number(form.price) < 0) return toast.error('Prix invalide.')
+      if (form.promoPrice && Number(form.promoPrice) > Number(form.price)) {
+  return toast.error('Le prix promo doit être inférieur ou égal au prix.')
+  }
+    const images = form.images.length ? form.images : ['/placeholder.svg']
     const payload = {
       ref: form.ref.trim() || `REF-${Date.now().toString().slice(-5)}`,
       name: { fr: form.nameFr.trim(), ar: form.nameAr.trim() || form.nameFr.trim() },
@@ -377,18 +383,33 @@ export function ProductsManager() {
             <div className="space-y-2">
               <Label htmlFor="category">{t('admin.form.category')}</Label>
               <Select
-                value={form.categoryId}
-                onValueChange={(v) => set('categoryId', v ?? '')}
+                // value={form.categoryId}
+                // onValueChange={(v) => set('categoryId', v ?? '')}
+                items={categories.map((c) => ({ value: c.id, label: tf(c.name) }))}
+                value={form.categoryId || null}
+                onValueChange={(v) => {
+                if (v === ADD_CATEGORY) {
+                setDialogOpen(false)
+                router.push('/admin/categories') // route
+                return
+                }
+                set('categoryId', v ?? '')
+                }}
               >
-                <SelectTrigger id="category">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>
-                      {tf(c.name)}
-                    </SelectItem>
-                  ))}
+               <SelectTrigger id="category" className="w-full">
+                 <SelectValue placeholder={t('admin.form.selectCategory')} />
+              </SelectTrigger>
+                <SelectContent alignItemWithTrigger={false}>
+               {categories.map((c) => (
+                <SelectItem key={c.id} value={c.id}>
+               {tf(c.name)}
+                </SelectItem>
+               ))}
+                <SelectSeparator />
+                <SelectItem value={ADD_CATEGORY} className="text-primary">
+                <Plus className="size-4" />
+                {t('admin.form.addCategory')}
+                 </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -411,13 +432,12 @@ export function ProductsManager() {
                 onChange={(e) => set('ref', e.target.value)}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="images">{t('admin.form.images')}</Label>
-              <Input
-                id="images"
-                value={form.images}
-                onChange={(e) => set('images', e.target.value)}
-                placeholder="/products/exemple.png"
+            <div className="space-y-2 sm:col-span-2">
+              <Label>{t('admin.form.images')}</Label>
+              <ImageUploader
+              value={form.images}
+              onChange={(images) => set('images', images)}
+              onUploadingChange={setUploading}
               />
             </div>
 
@@ -445,7 +465,7 @@ export function ProductsManager() {
             <Button variant="outline" onClick={() => setDialogOpen(false)}>
               {t('admin.form.cancel')}
             </Button>
-            <Button onClick={handleSave} disabled={saving}>{t('admin.form.save')}</Button>
+            <Button onClick={handleSave} disabled={saving || uploading}>{t('admin.form.save')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -15,15 +15,32 @@ export async function readJson(request: Request): Promise<Record<string, unknown
     return null
   }
 }
+export function isText(value: unknown, maxLength = 5000): value is string {
+  return typeof value === 'string' && value.length <= maxLength
+}
 
-export function reportApiError(error: unknown) {
+export function isIntegerInRange(value: unknown, max: number): value is number {
+  return Number.isSafeInteger(value) && Number(value) >= 0 && Number(value) <= max
+}
+type Override = { message: string; status?: number }
+
+export function reportApiError(error: unknown, overrides: Record<string, Override> = {}) {
   console.error('API request failed:', error)
+
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    const o = overrides[error.code]
+    if (o) return apiError(o.message, o.status ?? 409)
     if (error.code === 'P2002') return apiError('Cette valeur existe déjà.', 409)
     if (error.code === 'P2003' || error.code === 'P2014') {
-      return apiError('Cette donnée est encore utilisée et ne peut pas être supprimée.', 409)
+      return apiError('Cette donnée est liée à d’autres éléments.', 409)
     }
     if (error.code === 'P2025') return apiError('Cette donnée est introuvable.', 404)
+    if (error.code === 'P2024' || error.code === 'P1008') {
+      return apiError('Service momentanément indisponible. Réessayez.', 503)
+    }
+  }
+  if (error instanceof Prisma.PrismaClientInitializationError) {
+    return apiError('Service momentanément indisponible. Réessayez.', 503)
   }
   return apiError('Une erreur interne est survenue.', 500)
 }

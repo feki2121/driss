@@ -20,7 +20,7 @@ export function ProductDetail({ product }: { product: Product }) {
   const [qty, setQty] = useState(1)
 
   const category = categories.find((c) => c.id === product.categoryId)
-  const outOfStock = product.stock <= 0
+  const unavailable = !product.isActive
   const hasPromo =
     typeof product.promoPrice === 'number' && product.promoPrice < product.price
   const unitPrice = hasPromo ? (product.promoPrice as number) : product.price
@@ -107,14 +107,14 @@ export function ProductDetail({ product }: { product: Product }) {
           </div>
 
           <div className="mt-4">
-            {outOfStock ? (
+            {unavailable ? (
               <span className="inline-flex items-center rounded-full bg-destructive/10 px-3 py-1 text-sm font-medium text-destructive">
                 {t('product.outOfStock')}
               </span>
             ) : (
               <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
                 <Check className="size-4" />
-                {t('product.inStock')} · {product.stock} {t('product.left')}
+                {t('product.inStock')}
               </span>
             )}
           </div>
@@ -123,7 +123,7 @@ export function ProductDetail({ product }: { product: Product }) {
             {tf(product.description)}
           </p>
 
-          {!outOfStock && (
+          {!unavailable && (
             <div className="mt-8 flex flex-wrap items-center gap-4">
               <div className="flex items-center rounded-lg border border-border">
                 <Button
@@ -140,7 +140,7 @@ export function ProductDetail({ product }: { product: Product }) {
                   type="button"
                   variant="ghost"
                   size="icon"
-                  onClick={() => setQty((q) => Math.min(product.stock, q + 1))}
+                  onClick={() => setQty((q) => q + 1)}
                   aria-label="+"
                 >
                   <Plus className="size-4" />

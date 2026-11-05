@@ -7,9 +7,9 @@ export type LocalizedText = {
 
 export type Category = {
   id: string
-  // slug: string
+  slug: string
   name: LocalizedText
-  // image: string
+  image: string
 }
 
 export type Product = {
@@ -21,7 +21,7 @@ export type Product = {
   promoPrice?: number | null
   images: string[]
   categoryId: string
-  stock: number
+  // stock: number
   isNew: boolean
   isActive: boolean
   createdAt: string

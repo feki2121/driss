@@ -79,84 +79,68 @@ export function ProductsCatalog() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <header className="mb-8">
-        <h1 className="font-serif text-3xl font-bold text-foreground sm:text-4xl">
-          {t('products.title')}
-        </h1>
-        <p className="mt-1 text-muted-foreground">{t('products.subtitle')}</p>
-      </header>
+    <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-10 lg:px-8">
+  <header className="mb-4 sm:mb-8">
+    <h1 className="font-serif text-2xl font-bold text-foreground sm:text-3xl lg:text-4xl">
+      {t('products.title')}
+    </h1>
+  </header>
 
-      <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
-        <aside className="space-y-6 lg:sticky lg:top-20 lg:h-fit">
-          <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-            <SlidersHorizontal className="size-4" />
-            {t('products.filters')}
-          </div>
+  <div className="grid gap-4 lg:grid-cols-[240px_1fr] lg:gap-8">
+    <aside className="flex items-end gap-2 lg:sticky lg:top-20 lg:block lg:h-fit lg:space-y-6">
+      <div className="hidden items-center gap-2 text-sm font-semibold text-foreground lg:flex">
+        <SlidersHorizontal className="size-4" />
+        {t('products.filters')}
+      </div>
 
-          <div className="relative">
-            <Search className="absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder={t('products.search')}
-              className="ps-9"
-            />
-          </div>
+      <div className="min-w-0 flex-1 space-y-2">
+        <Label className="sr-only text-xs uppercase tracking-wide text-muted-foreground lg:not-sr-only">
+          {t('nav.categories')}
+        </Label>
+        <Select value={category} onValueChange={(value) => setCategory(value ?? 'all')}>
+          <SelectTrigger className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">{t('categories.all')}</SelectItem>
+            {categories.map((c) => (
+              <SelectItem key={c.id} value={c.slug}>
+                {tf(c.name)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
-          <div className="space-y-2">
-            <Label className="text-xs uppercase tracking-wide text-muted-foreground">
-              {t('nav.categories')}
-            </Label>
-            <Select value={category} onValueChange={(value) => setCategory(value ?? 'all')}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t('categories.all')}</SelectItem>
-                {categories.map((c) => (
-                  <SelectItem key={c.id} value={c.slug}>
-                    {tf(c.name)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+      <div className="min-w-0 flex-1 space-y-2">
+        <Label className="sr-only text-xs uppercase tracking-wide text-muted-foreground lg:not-sr-only">
+          {t('products.sort')}
+        </Label>
+        <Select value={sort} onValueChange={(v) => setSort(v as Sort)}>
+          <SelectTrigger className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="newest">{t('products.sort.newest')}</SelectItem>
+            <SelectItem value="priceAsc">{t('products.sort.priceAsc')}</SelectItem>
+            <SelectItem value="priceDesc">{t('products.sort.priceDesc')}</SelectItem>
+            <SelectItem value="promo">{t('products.promo')}</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
-          <div className="space-y-2">
-            <Label className="text-xs uppercase tracking-wide text-muted-foreground">
-              {t('products.sort')}
-            </Label>
-            <Select value={sort} onValueChange={(v) => setSort(v as Sort)}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="newest">{t('products.sort.newest')}</SelectItem>
-                <SelectItem value="priceAsc">
-                  {t('products.sort.priceAsc')}
-                </SelectItem>
-                <SelectItem value="priceDesc">
-                  {t('products.sort.priceDesc')}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex items-center justify-between rounded-lg border border-border p-3">
-            <Label htmlFor="promo" className="text-sm font-normal">
-              {t('products.onlyPromo')}
-            </Label>
-            <Switch id="promo" checked={onlyPromo} onCheckedChange={setOnlyPromo} />
-          </div>
-
-          {isFiltered && (
-            <Button variant="ghost" size="sm" onClick={reset} className="gap-1.5">
-              <X className="size-4" />
-              {t('products.clear')}
-            </Button>
-          )}
-        </aside>
+      {isFiltered && (
+        <Button variant="ghost" size="icon" onClick={reset} aria-label={t('products.clear')} className="shrink-0 lg:hidden">
+          <X className="size-7 " />
+        </Button>
+      )}
+      {isFiltered && (
+        <Button variant="ghost" size="sm" onClick={reset} className="hidden gap-1.5 lg:inline-flex">
+          <X className="size-7 " />
+          {t('products.clear')}
+        </Button>
+      )}
+    </aside>
 
         <div>
           <p className="mb-5 text-sm text-muted-foreground">

@@ -60,54 +60,49 @@ export async function POST(request: NextRequest) {
       requestedItems.push({ productId, quantity })
     }
 
-    const order = await prisma.$transaction(async (transaction) => {
-      const products = await transaction.product.findMany({
-        where: { id: { in: requestedItems.map((item) => item.productId) }, isActive: true },
-      })
-      if (products.length !== requestedItems.length) {
-        throw new Error('ORDER_PRODUCT_UNAVAILABLE')
-      }
+   const order = await prisma.$transaction(async (transaction) => {
+  const products = await transaction.product.findMany({
+    where: { id: { in: requestedItems.map((item) => item.productId) }, isActive: true },
+  })
+  if (products.length !== requestedItems.length) {
+    throw new Error('ORDER_PRODUCT_UNAVAILABLE')
+  }
 
-      const byId = new Map(products.map((product) => [product.id, product]))
-      const orderItems = []
-      let total = 0
-      for (const requested of requestedItems) {
-        const product = byId.get(requested.productId)
-        if (!product) throw new Error('ORDER_PRODUCT_UNAVAILABLE')
-        const changed = await transaction.product.updateMany({
-          where: { id: product.id, isActive: true, stock: { gte: requested.quantity } },
-          data: { stock: { decrement: requested.quantity } },
-        })
-        if (changed.count !== 1) throw new Error('ORDER_OUT_OF_STOCK')
-        const unitPrice = product.promoPrice != null && Number(product.promoPrice) < Number(product.price)
-          ? Number(product.promoPrice)
-          : Number(product.price)
-        total += unitPrice * requested.quantity
-        if (total > 99_999_999.99) throw new Error('ORDER_TOTAL_LIMIT')
-        const images = Array.isArray(product.images) ? product.images : []
-        orderItems.push({
-          productId: product.id,
-          productNameFr: product.nameFr,
-          productNameAr: product.nameAr,
-          unitPrice,
-          image: typeof images[0] === 'string' ? images[0] : '/placeholder.svg',
-          quantity: requested.quantity,
-        })
-      }
-
-      return transaction.order.create({
-        data: {
-          number: `CMD-${new Date().getFullYear()}-${randomUUID().slice(0, 8).toUpperCase()}`,
-          fullName: fullName.trim(),
-          phone1: phone1.trim(),
-          phone2: typeof phone2 === 'string' && phone2.trim() ? phone2.trim() : null,
-          address: address.trim(),
-          total,
-          items: { create: orderItems },
-        },
-        include: { items: true },
-      })
+  const byId = new Map(products.map((product) => [product.id, product]))
+  const orderItems = []
+  let total = 0
+  for (const requested of requestedItems) {
+    const product = byId.get(requested.productId)
+    if (!product) throw new Error('ORDER_PRODUCT_UNAVAILABLE')
+    const unitPrice = product.promoPrice != null && Number(product.promoPrice) < Number(product.price)
+      ? Number(product.promoPrice)
+      : Number(product.price)
+    total += unitPrice * requested.quantity
+    // if (total > 99_999_999.99) throw new Error('ORDER_TOTAL_LIMIT')
+    const images = Array.isArray(product.images) ? product.images : []
+    orderItems.push({
+      productId: product.id,
+      productNameFr: product.nameFr,
+      productNameAr: product.nameAr,
+      unitPrice,
+      image: typeof images[0] === 'string' ? images[0] : '/placeholder.svg',
+      quantity: requested.quantity,
     })
+  }
+
+  return transaction.order.create({
+    data: {
+      number: `CMD-${new Date().getFullYear()}-${randomUUID().slice(0, 8).toUpperCase()}`,
+      fullName: fullName.trim(),
+      phone1: phone1.trim(),
+      phone2: typeof phone2 === 'string' && phone2.trim() ? phone2.trim() : null,
+      address: address.trim(),
+      total,
+      items: { create: orderItems },
+    },
+    include: { items: true },
+  })
+})
     return NextResponse.json(serializeOrder(order), { status: 201 })
   } catch (error) {
     if (error instanceof Error && error.message === 'ORDER_PRODUCT_UNAVAILABLE') {

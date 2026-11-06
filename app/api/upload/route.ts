@@ -8,6 +8,7 @@ const TYPES: Record<string, string> = {
   'image/png': 'png',
   'image/webp': 'webp',
 }
+
 const MAX_SIZE = 3 * 1024 * 1024 // Vercel functions accept ~4 MB bodies
 
 export async function POST(request: NextRequest) {

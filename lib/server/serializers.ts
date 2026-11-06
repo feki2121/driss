@@ -13,9 +13,9 @@ const statusToClient: Record<DbOrder['status'], OrderStatus> = {
 export function serializeCategory(category: DbCategory): Category {
   return {
     id: category.id,
-    // slug: category.slug,
+    slug: category.slug,
     name: { fr: category.nameFr, ar: category.nameAr },
-    // image: category.image,
+    image: category.image,
   }
 }
 
@@ -32,7 +32,7 @@ export function serializeProduct(product: DbProduct): Product {
     promoPrice: product.promoPrice === null ? null : Number(product.promoPrice),
     images,
     categoryId: product.categoryId,
-    stock: product.stock,
+    // stock: product.stock,
     isNew: product.isNew,
     isActive: product.isActive,
     createdAt: product.createdAt.toISOString(),

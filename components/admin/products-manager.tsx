@@ -1,22 +1,22 @@
-'use client'
+"use client";
 
-import { useMemo, useState } from 'react'
-import Image from 'next/image'
-import { Pencil, Plus, Search, Trash2 } from 'lucide-react'
-import { toast } from 'sonner'
-import { useLanguage } from '@/components/providers/language-provider'
-import { useStore } from '@/components/providers/store-provider'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { useMemo, useState } from "react";
+import Image from "next/image";
+import { Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { toast } from "sonner";
+import { useLanguage } from "@/components/providers/language-provider";
+import { useStore } from "@/components/providers/store-provider";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -24,9 +24,9 @@ import {
   SelectTrigger,
   SelectValue,
   SelectSeparator,
-} from '@/components/ui/select'
-import { Switch } from '@/components/ui/switch'
-import { Textarea } from '@/components/ui/textarea'
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Table,
   TableBody,
@@ -34,165 +34,173 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import type { Product } from '@/lib/types'
-import { useRouter } from 'next/navigation'
-import {  } from '@/components/ui/select'
-import { ImageUploader } from '@/components/admin/image-uploader'
+} from "@/components/ui/table";
+import type { Product } from "@/lib/types";
+import { useRouter } from "next/navigation";
+import {} from "@/components/ui/select";
+import { ImageUploader } from "@/components/admin/image-uploader";
 
 type FormState = {
-  nameFr: string
-  nameAr: string
-  descFr: string
-  descAr: string
-  price: string
-  promoPrice: string
-  categoryId: string
-  stock: string
-  ref: string
-  images: string[]
-  isNew: boolean
-  isActive: boolean
-}
+  nameFr: string;
+  nameAr: string;
+  descFr: string;
+  descAr: string;
+  price: string;
+  promoPrice: string;
+  categoryId: string;
+  // stock: string
+  ref: string;
+  images: string[];
+  isNew: boolean;
+  isActive: boolean;
+};
 
 const emptyForm = (categoryId: string): FormState => ({
-  nameFr: '',
-  nameAr: '',
-  descFr: '',
-  descAr: '',
-  price: '',
-  promoPrice: '',
-  categoryId:'',
-  stock: '0',
-  ref: '',
+  nameFr: "",
+  nameAr: "",
+  descFr: "",
+  descAr: "",
+  price: "",
+  promoPrice: "",
+  categoryId: "",
+  // stock: '0',
+  ref: "",
   images: [],
   isNew: false,
   isActive: true,
-})
+});
 
 export function ProductsManager() {
-  const { t, tf, price } = useLanguage()
-  const {
-    products,
-    categories,
-    addProduct,
-    updateProduct,
-    deleteProduct,
-  } = useStore()
+  const { t, tf, price } = useLanguage();
+  const { products, categories, addProduct, updateProduct, deleteProduct } =
+    useStore();
 
-const ADD_CATEGORY = '__add_category__'
-const router = useRouter()
+  const ADD_CATEGORY = "__add_category__";
+  const router = useRouter();
 
-  const [search, setSearch] = useState('')
-  const [dialogOpen, setDialogOpen] = useState(false)
-  const [saving, setSaving] = useState(false)
-  const [editing, setEditing] = useState<Product | null>(null)
-  const [form, setForm] = useState<FormState>(emptyForm(''))
-  const [uploading, setUploading] = useState(false)
+  const [search, setSearch] = useState("");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [editing, setEditing] = useState<Product | null>(null);
+  const [form, setForm] = useState<FormState>(emptyForm(""));
+  const [uploading, setUploading] = useState(false);
 
   const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase()
-    if (!q) return products
+    const q = search.trim().toLowerCase();
+    if (!q) return products;
     return products.filter(
       (p) =>
         p.name.fr.toLowerCase().includes(q) ||
         p.name.ar.toLowerCase().includes(q) ||
         p.ref.toLowerCase().includes(q),
-    )
-  }, [products, search])
+    );
+  }, [products, search]);
 
   const openNew = () => {
-    setEditing(null)
-    setForm(emptyForm(''))
-    setDialogOpen(true)
-  }
+    setEditing(null);
+    setForm(emptyForm(""));
+    setDialogOpen(true);
+  };
 
   const openEdit = (product: Product) => {
-    setEditing(product)
+    setEditing(product);
     setForm({
       nameFr: product.name.fr,
       nameAr: product.name.ar,
       descFr: product.description.fr,
       descAr: product.description.ar,
       price: String(product.price),
-      promoPrice: product.promoPrice ? String(product.promoPrice) : '',
+      promoPrice: product.promoPrice ? String(product.promoPrice) : "",
       categoryId: product.categoryId,
-      stock: String(product.stock),
+      // stock: String(product.stock),
       ref: product.ref,
       images: product.images,
       isNew: product.isNew,
       isActive: product.isActive,
-    })
-    setDialogOpen(true)
-  }
+    });
+    setDialogOpen(true);
+  };
 
   const catName = (id: string) => {
-    const c = categories.find((x) => x.id === id)
-    return c ? tf(c.name) : '—'
-  }
+    const c = categories.find((x) => x.id === id);
+    return c ? tf(c.name) : "—";
+  };
 
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) =>
-    setForm((f) => ({ ...f, [key]: value }))
+    setForm((f) => ({ ...f, [key]: value }));
 
   const handleSave = async () => {
-    if (!form.nameFr.trim()) return toast.error('Le nom (FR) est requis.')
-    if (!form.price || Number(form.price) < 0) return toast.error('Prix invalide.')
-      if (form.promoPrice && Number(form.promoPrice) > Number(form.price)) {
-  return toast.error('Le prix promo doit être inférieur ou égal au prix.')
-  }
-    const images = form.images.length ? form.images : ['/placeholder.svg']
+    if (!form.nameFr.trim()) return toast.error("Le nom (FR) est requis.");
+    if (!form.price || Number(form.price) < 0)
+      return toast.error("Prix invalide.");
+    if (form.promoPrice && Number(form.promoPrice) > Number(form.price)) {
+      return toast.error("Le prix promo doit être inférieur ou égal au prix.");
+    }
+    const images = form.images.length ? form.images : ["/placeholder.svg"];
     const payload = {
       ref: form.ref.trim() || `REF-${Date.now().toString().slice(-5)}`,
-      name: { fr: form.nameFr.trim(), ar: form.nameAr.trim() || form.nameFr.trim() },
+      name: {
+        fr: form.nameFr.trim(),
+        ar: form.nameAr.trim() || form.nameFr.trim(),
+      },
       description: {
         fr: form.descFr.trim(),
         ar: form.descAr.trim() || form.descFr.trim(),
       },
       price: Number(form.price),
       promoPrice: form.promoPrice ? Number(form.promoPrice) : null,
-      images: images.length ? images : ['/placeholder.svg'],
+      images: images.length ? images : ["/placeholder.svg"],
       categoryId: form.categoryId,
-      stock: Number(form.stock) || 0,
+      // stock: Number(form.stock) || 0,
       isNew: form.isNew,
       isActive: form.isActive,
-    }
+    };
 
-    setSaving(true)
+    setSaving(true);
     try {
-      if (editing) await updateProduct(editing.id, payload)
-      else await addProduct(payload)
-      toast.success(t('admin.settings.saved'))
-      setDialogOpen(false)
+      if (editing) await updateProduct(editing.id, payload);
+      else await addProduct(payload);
+      toast.success(t("admin.settings.saved"));
+      setDialogOpen(false);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Impossible d’enregistrer le produit.')
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Impossible d’enregistrer le produit.",
+      );
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   const handleDelete = (product: Product) => {
-    if (window.confirm(t('admin.products.deleteConfirm'))) {
+    if (window.confirm(t("admin.products.deleteConfirm"))) {
       void deleteProduct(product.id).then(
-        () => toast.success(t('admin.products.delete')),
-        (error: unknown) => toast.error(error instanceof Error ? error.message : 'Impossible de supprimer le produit.'),
-      )
+        () => toast.success(t("admin.products.delete")),
+        (error: unknown) =>
+          toast.error(
+            error instanceof Error
+              ? error.message
+              : "Impossible de supprimer le produit.",
+          ),
+      );
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="font-serif text-2xl font-bold text-foreground">
-            {t('admin.products.title')}
+            {t("admin.products.title")}
           </h1>
           <p className="text-sm text-muted-foreground">
-            {t('admin.products.subtitle')}
+            {t("admin.products.subtitle")}
           </p>
         </div>
         <Button onClick={openNew} className="gap-2">
           <Plus className="size-4" />
-          {t('admin.products.add')}
+          {t("admin.products.add")}
         </Button>
       </header>
 
@@ -201,7 +209,7 @@ const router = useRouter()
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder={t('admin.products.search')}
+          placeholder={t("admin.products.search")}
           className="ps-9"
         />
       </div>
@@ -210,19 +218,19 @@ const router = useRouter()
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>{t('admin.products.name')}</TableHead>
+              <TableHead>{t("admin.products.name")}</TableHead>
               <TableHead className="hidden md:table-cell">
-                {t('admin.form.category')}
+                {t("admin.form.category")}
               </TableHead>
-              <TableHead>{t('admin.products.price')}</TableHead>
-              <TableHead className="hidden sm:table-cell">
+              <TableHead>{t("admin.products.price")}</TableHead>
+              {/* <TableHead className="hidden sm:table-cell">
                 {t('admin.products.stock')}
-              </TableHead>
+              </TableHead> */}
               <TableHead className="hidden sm:table-cell">
-                {t('admin.products.status')}
+                {t("admin.products.status")}
               </TableHead>
               <TableHead className="text-end">
-                {t('admin.products.actions')}
+                {t("admin.products.actions")}
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -233,7 +241,7 @@ const router = useRouter()
                   <div className="flex items-center gap-3">
                     <div className="relative size-11 shrink-0 overflow-hidden rounded-md bg-muted">
                       <Image
-                        src={p.images[0] || '/placeholder.svg'}
+                        src={p.images[0] || "/placeholder.svg"}
                         alt={tf(p.name)}
                         fill
                         sizes="44px"
@@ -263,7 +271,7 @@ const router = useRouter()
                     )}
                   </div>
                 </TableCell>
-                <TableCell className="hidden sm:table-cell">
+                {/* <TableCell className="hidden sm:table-cell">
                   <span
                     className={
                       p.stock <= 0
@@ -275,15 +283,33 @@ const router = useRouter()
                   >
                     {p.stock}
                   </span>
-                </TableCell>
+                </TableCell> */}
                 <TableCell className="hidden sm:table-cell">
-                  {p.isActive ? (
-                    <Badge variant="secondary">{t('admin.products.active')}</Badge>
-                  ) : (
-                    <Badge variant="outline">
-                      {t('admin.products.inactive')}
-                    </Badge>
-                  )}
+                  <label className="flex items-center gap-2 text-sm">
+                    <Switch
+                      checked={p.isActive}
+                      onCheckedChange={(v) =>
+                        void updateProduct(p.id, { isActive: v }).catch(
+                          (error: unknown) =>
+                            toast.error(
+                              error instanceof Error
+                                ? error.message
+                                : t("admin.isActive.edit.error") ,
+                            ),
+                        )
+                      }
+                      aria-label={t("admin.form.isActive")}
+                    />
+                    <span
+                      className={
+                        p.isActive ? "text-foreground" : "text-muted-foreground"
+                      }
+                    >
+                      {p.isActive
+                        ? t("admin.products.active")
+                        : t("admin.products.inactive")}
+                    </span>
+                  </label>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center justify-end gap-1">
@@ -291,7 +317,7 @@ const router = useRouter()
                       variant="ghost"
                       size="icon"
                       onClick={() => openEdit(p)}
-                      aria-label={t('admin.products.edit')}
+                      aria-label={t("admin.products.edit")}
                     >
                       <Pencil className="size-4" />
                     </Button>
@@ -299,7 +325,7 @@ const router = useRouter()
                       variant="ghost"
                       size="icon"
                       onClick={() => handleDelete(p)}
-                      aria-label={t('admin.products.delete')}
+                      aria-label={t("admin.products.delete")}
                       className="text-muted-foreground hover:text-destructive"
                     >
                       <Trash2 className="size-4" />
@@ -316,104 +342,105 @@ const router = useRouter()
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
           <DialogHeader>
             <DialogTitle className="font-serif">
-              {editing ? t('admin.form.editTitle') : t('admin.form.newTitle')}
+              {editing ? t("admin.form.editTitle") : t("admin.form.newTitle")}
             </DialogTitle>
           </DialogHeader>
 
           <div className="grid gap-4 py-2 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="nameFr">{t('admin.form.nameFr')}</Label>
+              <Label htmlFor="nameFr">{t("admin.form.nameFr")}</Label>
               <Input
                 id="nameFr"
                 value={form.nameFr}
-                onChange={(e) => set('nameFr', e.target.value)}
+                onChange={(e) => set("nameFr", e.target.value)}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="nameAr">{t('admin.form.nameAr')}</Label>
+              <Label htmlFor="nameAr">{t("admin.form.nameAr")}</Label>
               <Input
                 id="nameAr"
                 dir="rtl"
                 value={form.nameAr}
-                onChange={(e) => set('nameAr', e.target.value)}
+                onChange={(e) => set("nameAr", e.target.value)}
               />
             </div>
 
             <div className="space-y-2 sm:col-span-2">
-              <Label htmlFor="descFr">{t('admin.form.descFr')}</Label>
+              <Label htmlFor="descFr">{t("admin.form.descFr")}</Label>
               <Textarea
                 id="descFr"
                 rows={2}
                 value={form.descFr}
-                onChange={(e) => set('descFr', e.target.value)}
+                onChange={(e) => set("descFr", e.target.value)}
               />
             </div>
             <div className="space-y-2 sm:col-span-2">
-              <Label htmlFor="descAr">{t('admin.form.descAr')}</Label>
+              <Label htmlFor="descAr">{t("admin.form.descAr")}</Label>
               <Textarea
                 id="descAr"
                 dir="rtl"
                 rows={2}
                 value={form.descAr}
-                onChange={(e) => set('descAr', e.target.value)}
+                onChange={(e) => set("descAr", e.target.value)}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="price">{t('admin.form.price')}</Label>
+              <Label htmlFor="price">{t("admin.form.price")}</Label>
               <Input
                 id="price"
                 type="number"
                 min="0"
                 value={form.price}
-                onChange={(e) => set('price', e.target.value)}
+                onChange={(e) => set("price", e.target.value)}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="promoPrice">{t('admin.form.promoPrice')}</Label>
+              <Label htmlFor="promoPrice">{t("admin.form.promoPrice")}</Label>
               <Input
                 id="promoPrice"
                 type="number"
                 min="0"
                 value={form.promoPrice}
-                onChange={(e) => set('promoPrice', e.target.value)}
+                onChange={(e) => set("promoPrice", e.target.value)}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="category">{t('admin.form.category')}</Label>
+              <Label htmlFor="category">{t("admin.form.category")}</Label>
               <Select
-                // value={form.categoryId}
-                // onValueChange={(v) => set('categoryId', v ?? '')}
-                items={categories.map((c) => ({ value: c.id, label: tf(c.name) }))}
+                items={categories.map((c) => ({
+                  value: c.id,
+                  label: tf(c.name),
+                }))}
                 value={form.categoryId || null}
                 onValueChange={(v) => {
-                if (v === ADD_CATEGORY) {
-                setDialogOpen(false)
-                router.push('/admin/categories') // route
-                return
-                }
-                set('categoryId', v ?? '')
+                  if (v === ADD_CATEGORY) {
+                    setDialogOpen(false);
+                    router.push("/admin/categories"); // route
+                    return;
+                  }
+                  set("categoryId", v ?? "");
                 }}
               >
-               <SelectTrigger id="category" className="w-full">
-                 <SelectValue placeholder={t('admin.form.selectCategory')} />
-              </SelectTrigger>
+                <SelectTrigger id="category" className="w-full">
+                  <SelectValue placeholder={t("admin.form.selectCategory")} />
+                </SelectTrigger>
                 <SelectContent alignItemWithTrigger={false}>
-               {categories.map((c) => (
-                <SelectItem key={c.id} value={c.id}>
-               {tf(c.name)}
-                </SelectItem>
-               ))}
-                <SelectSeparator />
-                <SelectItem value={ADD_CATEGORY} className="text-primary">
-                <Plus className="size-4" />
-                {t('admin.form.addCategory')}
-                 </SelectItem>
+                  {categories.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {tf(c.name)}
+                    </SelectItem>
+                  ))}
+                  <SelectSeparator />
+                  <SelectItem value={ADD_CATEGORY} className="text-primary">
+                    <Plus className="size-4" />
+                    {t("admin.form.addCategory")}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label htmlFor="stock">{t('admin.form.stock')}</Label>
               <Input
                 id="stock"
@@ -422,22 +449,22 @@ const router = useRouter()
                 value={form.stock}
                 onChange={(e) => set('stock', e.target.value)}
               />
-            </div>
+            </div> */}
 
             <div className="space-y-2">
-              <Label htmlFor="ref">{t('admin.form.ref')}</Label>
+              <Label htmlFor="ref">{t("admin.form.ref")}</Label>
               <Input
                 id="ref"
                 value={form.ref}
-                onChange={(e) => set('ref', e.target.value)}
+                onChange={(e) => set("ref", e.target.value)}
               />
             </div>
             <div className="space-y-2 sm:col-span-2">
-              <Label>{t('admin.form.images')}</Label>
+              <Label>{t("admin.form.images")}</Label>
               <ImageUploader
-              value={form.images}
-              onChange={(images) => set('images', images)}
-              onUploadingChange={setUploading}
+                value={form.images}
+                onChange={(images) => set("images", images)}
+                onUploadingChange={setUploading}
               />
             </div>
 
@@ -446,16 +473,16 @@ const router = useRouter()
                 <label className="flex items-center gap-2 text-sm">
                   <Switch
                     checked={form.isNew}
-                    onCheckedChange={(v) => set('isNew', v)}
+                    onCheckedChange={(v) => set("isNew", v)}
                   />
-                  {t('admin.form.isNew')}
+                  {t("admin.form.isNew")}
                 </label>
                 <label className="flex items-center gap-2 text-sm">
                   <Switch
                     checked={form.isActive}
-                    onCheckedChange={(v) => set('isActive', v)}
+                    onCheckedChange={(v) => set("isActive", v)}
                   />
-                  {t('admin.form.isActive')}
+                  {t("admin.form.isActive")}
                 </label>
               </div>
             </div>
@@ -463,12 +490,14 @@ const router = useRouter()
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>
-              {t('admin.form.cancel')}
+              {t("admin.form.cancel")}
             </Button>
-            <Button onClick={handleSave} disabled={saving || uploading}>{t('admin.form.save')}</Button>
+            <Button onClick={handleSave} disabled={saving || uploading}>
+              {t("admin.form.save")}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

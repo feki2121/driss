@@ -91,7 +91,7 @@ function productPayload(product: Partial<Product>) {
   if (product.promoPrice !== undefined) payload.promoPrice = product.promoPrice
   if (product.images !== undefined) payload.images = product.images
   if (product.categoryId !== undefined) payload.categoryId = product.categoryId
-  if (product.stock !== undefined) payload.stock = product.stock
+  // if (product.stock !== undefined) payload.stock = product.stock
   if (product.isNew !== undefined) payload.isNew = product.isNew
   if (product.isActive !== undefined) payload.isActive = product.isActive
   return payload

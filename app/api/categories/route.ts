@@ -27,6 +27,8 @@ export async function POST(request: NextRequest) {
     const category = await prisma.category.create({ data: result.data })
     return NextResponse.json(serializeCategory(category), { status: 201 })
   } catch (error) {
-    return reportApiError(error)
-  }
+  return reportApiError(error, {
+    P2002: { message: 'Une catégorie avec ce nom ou ce slug existe déjà.' },
+  })
+}
 }

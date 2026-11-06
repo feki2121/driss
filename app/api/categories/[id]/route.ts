@@ -29,12 +29,12 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     if (!body) return apiError('Les données de la catégorie sont invalides.', 400)
     const name = body.name ?? { fr: existing.nameFr, ar: existing.nameAr }
     const input = parseCategoryInput({
-      // slug: body.slug ?? existing.slug,
-      // image: body.image ?? existing.image,
-      name,
+      name: body.name ?? { fr: existing.nameFr, ar: existing.nameAr },
+      slug: body.slug || existing.slug,
+      image: body.image || existing.image,
     })
-    if (!input) return apiError('Les données de la catégorie sont invalides.', 400)
-    const category = await prisma.category.update({ where: { id }, data: input })
+    if (!input.ok) return apiError('Les données de la catégorie sont invalides.', 400)
+    const category = await prisma.category.update({ where: { id }, data: input.data })
     return NextResponse.json(serializeCategory(category))
   } catch (error) {
     return reportApiError(error)

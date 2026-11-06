@@ -1,6 +1,6 @@
 import { isIntegerInRange, isString, isText, isValidMoney } from '@/lib/server/api'
 
-function isValidImageSource(value: string) {
+export function isValidImageSource(value: string) {
   return (value.startsWith('/') && !value.startsWith('//')) || /^https:\/\//i.test(value)
 }
 
@@ -23,7 +23,7 @@ export function parseProductInput(value: Record<string, unknown>) {
     !images.every((i) => typeof i === 'string' && i.length <= 2048 && isValidImageSource(i))
       ? 'Chaque image doit être un chemin local (/...) ou une URL https.' :
     !isString(value.categoryId, 100) ? 'La catégorie est requise.' :
-    !isIntegerInRange(value.stock, 1_000_000) ? 'Le stock doit être un entier positif ou nul.' :
+    // !isIntegerInRange(value.stock, 1_000_000) ? 'Le stock doit être un entier positif ou nul.' :
     typeof value.isNew !== 'boolean' || typeof value.isActive !== 'boolean'
       ? 'Valeurs invalides.' :
     null

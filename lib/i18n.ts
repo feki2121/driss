@@ -137,6 +137,10 @@ const fr: Dict = {
   'admin.categories.products': 'Produits',
   'admin.form.addCategory': 'Ajouter une catégorie',
   'admin.form.selectCategory': 'Sélectionner une catégorie',
+  'admin.categories.slugPlaceholder': 'salon',
+  'admin.categories.slugHint': 'slug',
+  'admin.categories.image': 'photo',
+  'admin.isActive.edit.error': 'Impossible de modifier le produit.',
 
   'admin.orders.updateStatus': 'Mettre à jour le statut',
   'admin.orders.allStatuses': 'Tous les statuts',
@@ -392,6 +396,10 @@ const ar: Dict = {
   'admin.categories.slug': 'المعرّف (slug)',
   'admin.form.addCategory': 'إضافة فئة',
   'admin.form.selectCategory': 'تحديد فئة',
+  'admin.categories.slugPlaceholder': 'صالة العرض',
+  'admin.categories.slugHint': 'يجب أن يكون المعرّف فريدًا ويحتوي على أحرف صغيرة فقط.',
+  'admin.categories.image': 'صورة الفئة',
+  'admin.isActive.edit.error':'يتعذر تعديل المنتج.',
 
   'admin.orders.updateStatus': 'تحديث الحالة',
   'admin.orders.allStatuses': 'جميع الحالات',

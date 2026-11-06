@@ -5,8 +5,19 @@ const nextConfig = {
   },
   images: {
     unoptimized: true,
-    remotePatterns: [{ protocol: 'https', hostname: '*.public.blob.vercel-storage.com' }],
+    remotePatterns: [
+      { protocol: 'https', hostname: '*.public.blob.vercel-storage.com' },
+    ],
   },
-}
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/produits',
+        permanent: false,
+      },
+    ];
+  },
+};
 
-export default nextConfig
+export default nextConfig;

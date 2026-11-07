@@ -62,27 +62,22 @@ export function CategoriesManager() {
   };
 
   const handleSave = async () => {
-    if (!form.nameFr.trim()) {
-      toast.error(t("checkout.required"));
-      return;
-    }
-    if (!form.image) {
-      toast.error("L’image est requise.");
-      return;
-    }
-    form.nameFr
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "");
-    const payload = {
-      name: {
-        fr: form.nameFr.trim(),
-        ar: form.nameAr.trim() || form.nameFr.trim(),
-      },
-      slug: form.slug.trim() || form.nameFr.trim(),
-      image: editing?.image ?? "/products/showroom.png",
-    };
+  if (!form.nameFr.trim()) {
+    toast.error(t("checkout.required"));
+    return;
+  }
+  if (!form.image) {
+    toast.error("L’image est requise.");
+    return;
+  }
+  const payload = {
+    name: {
+      fr: form.nameFr.trim(),
+      ar: form.nameAr.trim() || form.nameFr.trim(),
+    },
+    slug: form.slug.trim(), // blank → the server generates it from the name
+    image: form.image,
+  };
     setSaving(true);
     try {
       if (editing) await updateCategory(editing.id, payload);

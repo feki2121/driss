@@ -1,13 +1,13 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { Camera, Globe, Mail, MapPin, Phone } from 'lucide-react'
-import { useLanguage } from '@/components/providers/language-provider'
-import { useStore } from '@/components/providers/store-provider'
+import Link from "next/link";
+import { Camera, Globe, Mail, MapPin, Phone } from "lucide-react";
+import { useLanguage } from "@/components/providers/language-provider";
+import { useStore } from "@/components/providers/store-provider";
 
 export function SiteFooter() {
-  const { t, tf } = useLanguage()
-  const { settings, categories } = useStore()
+  const { t, tf } = useLanguage();
+  const { settings, categories } = useStore();
 
   return (
     <footer
@@ -18,7 +18,7 @@ export function SiteFooter() {
         <div className="md:col-span-1">
           <p className="font-serif text-2xl font-bold">{settings.storeName}</p>
           <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">
-            {t('footer.tagline')}
+            {t("footer.tagline")}
           </p>
           <div className="mt-5 flex gap-3">
             <Link
@@ -40,22 +40,22 @@ export function SiteFooter() {
 
         <div>
           <p className="mb-4 text-sm font-semibold uppercase tracking-wider">
-            {t('footer.shop')}
+            {t("footer.shop")}
           </p>
           <ul className="space-y-2.5 text-sm text-muted-foreground">
             <li>
               <Link href="/produits" className="hover:text-foreground">
-                {t('nav.products')}
+                {t("nav.products")}
               </Link>
             </li>
             <li>
-              <Link href="/#about" className="hover:text-foreground">
-                {t('nav.about')}
+              <Link href="/accueil#about" className="hover:text-foreground">
+                {t("nav.about")}
               </Link>
             </li>
             <li>
-              <Link href="/produits" className="hover:text-foreground">
-                {t('nav.products')}
+              <Link href="/?promo=1" className="hover:text-foreground">
+                {t("products.promo")}
               </Link>
             </li>
           </ul>
@@ -63,7 +63,7 @@ export function SiteFooter() {
 
         <div>
           <p className="mb-4 text-sm font-semibold uppercase tracking-wider">
-            {t('nav.categories')}
+            {t("nav.categories")}
           </p>
           <ul className="space-y-2.5 text-sm text-muted-foreground">
             {categories.slice(0, 5).map((c) => (
@@ -81,7 +81,7 @@ export function SiteFooter() {
 
         <div>
           <p className="mb-4 text-sm font-semibold uppercase tracking-wider">
-            {t('nav.contact')}
+            {t("nav.contact")}
           </p>
           <ul className="space-y-3 text-sm text-muted-foreground">
             <li className="flex items-start gap-2.5">
@@ -90,7 +90,10 @@ export function SiteFooter() {
             </li>
             <li className="flex items-center gap-2.5">
               <Phone className="size-4 shrink-0" />
-              <a href={`tel:${settings.phone}`} className="hover:text-foreground">
+              <a
+                href={`tel:${settings.phone}`}
+                className="hover:text-foreground"
+              >
                 {settings.phone}
               </a>
             </li>
@@ -110,11 +113,12 @@ export function SiteFooter() {
       <div className="border-t border-border">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-muted-foreground sm:flex-row sm:px-6 lg:px-8">
           <p>
-            © {new Date().getFullYear()} {settings.storeName}. {t('footer.rights')}
+            © {new Date().getFullYear()} {settings.storeName}.{" "}
+            {t("footer.rights")}
           </p>
           <p>{settings.address}</p>
         </div>
       </div>
     </footer>
-  )
+  );
 }

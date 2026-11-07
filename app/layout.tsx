@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   title: 'Espace Baya — Meubles & Art de vivre',
   description:
     "Espace Baya, votre boutique de meubles et articles pour la maison en Tunisie. Tables de salon, bureaux, salons, chaises et rangement — élégance et qualité au meilleur prix.",
-  generator: 'v0.app',
+  
 }
 
 export default function RootLayout({

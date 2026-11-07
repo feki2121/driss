@@ -1,33 +1,33 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useState } from 'react'
-import { Menu, X } from 'lucide-react'
-import { useLanguage } from '@/components/providers/language-provider'
-import { useStore } from '@/components/providers/store-provider'
-import { LanguageSwitcher } from '@/components/store/language-switcher'
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { Menu, X } from "lucide-react";
+import { useLanguage } from "@/components/providers/language-provider";
+import { useStore } from "@/components/providers/store-provider";
+import { LanguageSwitcher } from "@/components/store/language-switcher";
 import {
   Sheet,
   SheetContent,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet'
-import { cn } from '@/lib/utils'
+} from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
 
 export function SiteHeader() {
-  const { t } = useLanguage()
-  const { settings } = useStore()
-  const pathname = usePathname()
-  const [open, setOpen] = useState(false)
+  const { t } = useLanguage();
+  const { settings } = useStore();
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
 
   const links = [
-    { href: '/', label: t('nav.home') },
-    { href: '/produits', label: t('nav.products') },
-    { href: '/#categories', label: t('nav.categories') },
-    { href: '/#about', label: t('nav.about') },
-    { href: '/#contact', label: t('nav.contact') },
-  ]
+    { href: "/accueil", label: t("nav.home") },
+    { href: "/", label: t("nav.products") },
+    { href: "/accueil#categories", label: t("nav.categories") },
+    { href: "/accueil#about", label: t("nav.about") },
+    { href: "/accueil#contact", label: t("nav.contact") },
+  ];
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/85 backdrop-blur-md">
@@ -37,7 +37,7 @@ export function SiteHeader() {
             {settings.storeName}
           </span>
           <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-            {t('brand.tagline')}
+            {t("brand.tagline")}
           </span>
         </Link>
 
@@ -47,8 +47,8 @@ export function SiteHeader() {
               key={link.href}
               href={link.href}
               className={cn(
-                'text-sm font-medium text-muted-foreground transition-colors hover:text-foreground',
-                pathname === link.href && 'text-foreground',
+                "text-sm font-medium text-muted-foreground transition-colors hover:text-foreground",
+                pathname === link.href && "text-foreground",
               )}
             >
               {link.label}
@@ -61,12 +61,12 @@ export function SiteHeader() {
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger
               className="inline-flex size-9 items-center justify-center rounded-md text-foreground transition-colors hover:bg-muted md:hidden"
-              aria-label={t('nav.menu')}
+              aria-label={t("nav.menu")}
             >
               <Menu className="size-5" />
             </SheetTrigger>
             <SheetContent side="right" className="w-72">
-              <SheetTitle className="sr-only">{t('nav.menu')}</SheetTitle>
+              <SheetTitle className="sr-only">{t("nav.menu")}</SheetTitle>
               <div className="flex flex-col gap-1 px-2 pt-8">
                 {links.map((link) => (
                   <Link
@@ -87,5 +87,5 @@ export function SiteHeader() {
         </div>
       </div>
     </header>
-  )
+  );
 }

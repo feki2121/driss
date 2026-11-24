@@ -27,9 +27,8 @@ type LanguageContextValue = {
 const LanguageContext = createContext<LanguageContextValue | null>(null)
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  // Keep the locale unresolved until the browser can read the preference. This
-  // prevents a persisted Arabic preference from changing translated markup
-  // between the server render and the first client render.
+  // Render the shared default locale on the server and during hydration, then
+  // apply any saved browser preference after hydration.
   const [locale, setLocaleState] = useState<Locale | null>(null)
 
   useEffect(() => {
@@ -64,8 +63,6 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     () => ({ locale: activeLocale, dir, setLocale, t, tf, price }),
     [activeLocale, dir, setLocale, t, tf, price],
   )
-
-  if (!locale) return null
 
   return (
     <LanguageContext.Provider value={value}>

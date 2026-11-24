@@ -69,7 +69,7 @@ export function SiteFooter() {
             {categories.slice(0, 5).map((c) => (
               <li key={c.id}>
                 <Link
-                  href={`/produits?categorie=${c.slug}`}
+                  href={`/categories/${encodeURIComponent(c.slug)}`}
                   className="hover:text-foreground"
                 >
                   {tf(c.name)}

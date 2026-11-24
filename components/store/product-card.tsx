@@ -12,12 +12,12 @@ import { cn } from '@/lib/utils'
 export function ProductCard({ product }: { product: Product }) {
   const { t, tf, price } = useLanguage()
   const router = useRouter()
-  const outOfStock = product.stock <= 0
+  const outOfStock = !product.isActive
   const hasPromo =
     typeof product.promoPrice === 'number' && product.promoPrice < product.price
 
   return (
-    <div className="group flex flex-col">
+    <article className="group flex flex-col">
       <Link
         href={`/produits/${product.id}`}
         className="relative block aspect-square overflow-hidden rounded-xl bg-muted"
@@ -85,6 +85,6 @@ export function ProductCard({ product }: { product: Product }) {
           {t('product.order')}
         </Button>
       </div>
-    </div>
+    </article>
   )
 }

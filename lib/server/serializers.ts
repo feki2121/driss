@@ -85,6 +85,6 @@ export function serializeSettings(settings: DbSettings | null) {
         ? null
         : Number(settings.freeDeliveryThreshold),
     whatsapp: settings?.whatsapp ?? '',
-    currency: settings?.currency ?? 'DZD',
+    currency: settings?.currency ?? 'TND',
   }
 }

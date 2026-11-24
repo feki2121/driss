@@ -69,6 +69,14 @@ model Order {
   total      Decimal     @db.Decimal(10, 2)
   status     OrderStatus @default(NEW)
   items      OrderItem[]
+  metaFbp            String?
+  metaFbc            String?
+  metaClientIp       String?
+  metaUserAgent      String?
+  metaEventSourceUrl String?
+  attribution        Json?
+  metaEventId        String?   @unique
+  metaPurchaseSentAt DateTime?
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
 
@@ -101,6 +109,6 @@ model StoreSettings {
   deliveryFee         Decimal  @default(0) @db.Decimal(10, 2)
   freeDeliveryThreshold Decimal? @db.Decimal(10, 2)
   whatsapp             String?
-  currency             String   @default("DZD")
+  currency             String   @default("TND")
   updatedAt           DateTime @updatedAt
 }

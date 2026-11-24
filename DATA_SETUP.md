@@ -10,6 +10,10 @@ En développement, les commandes `db:push` et `db:generate` utilisent
    En production, configurez `DATABASE_URL` pour PostgreSQL, générez le client
    avec `pnpm db:generate:prod` et définissez `ADMIN_SESSION_SECRET` dans
    l'environnement. Ce secret doit faire au moins 32 caractères et rester privé.
+   Définissez aussi `NEXT_PUBLIC_SITE_URL` sur l'origine canonique du site
+   (par exemple `https://www.example.com`, sans chemin) pour les URL canoniques,
+   les aperçus de partage et le sitemap. En local, l'application utilise
+   `http://localhost:3000` par défaut.
 2. Créez les tables et le client Prisma avec `pnpm db:push` puis
    `pnpm db:generate`.
 3. Créez ou réinitialisez l'administrateur en définissant `ADMIN_EMAIL` et

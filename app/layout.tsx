@@ -5,7 +5,9 @@ import { Analytics } from '@vercel/analytics/next'
 import { Suspense } from 'react'
 import { AppProviders } from '@/components/providers/app-providers'
 import { Toaster } from '@/components/ui/sonner'
+import { getSiteUrl } from '@/lib/seo'
 import './globals.css'
+import MetaPixel from "@/components/MetaPixel";
 
 const inter = Inter({
   subsets: ['latin'],
@@ -26,10 +28,44 @@ const cairo = Cairo({
 })
 
 export const metadata: Metadata = {
-  title: 'Espace Baya — Meubles & Art de vivre',
+  metadataBase: getSiteUrl(),
+  title: {
+    default: 'Espace Baya — Meubles & Art de vivre',
+    template: '%s | Espace Baya',
+  },
   description:
-    "Espace Baya, votre boutique de meubles et articles pour la maison en Tunisie. Tables de salon, bureaux, salons, chaises et rangement — élégance et qualité au meilleur prix.",
-  
+    'Découvrez une sélection de meubles élégants pour chaque pièce : canapés, tables, chaises, bureaux et rangement chez Espace Baya.',
+  keywords: [
+    'meubles',
+    'mobilier',
+    'canapé',
+    'tables',
+    'chaises',
+    'meubles de maison',
+    'Espace Baya',
+  ],
+  openGraph: {
+    type: 'website',
+    title: 'Espace Baya — Meubles & Art de vivre',
+    description:
+      'Des meubles élégants et intemporels, sélectionnés avec soin pour votre intérieur.',
+    siteName: 'Espace Baya',
+    locale: 'fr_FR',
+    url: '/',
+    images: [
+      {
+        url: '/products/hero-living.png',
+        alt: 'Sélection de meubles Espace Baya',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Espace Baya — Meubles & Art de vivre',
+    description:
+      'Des meubles élégants et intemporels, sélectionnés avec soin pour votre intérieur.',
+    images: ['/products/hero-living.png'],
+  },
 }
 
 export default function RootLayout({
@@ -42,6 +78,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${playfair.variable} ${cairo.variable} font-sans antialiased`}
       >
+        <MetaPixel />
         <AppProviders>
           <Suspense fallback={null}>{children}</Suspense>
         </AppProviders>

@@ -6,6 +6,7 @@ import { Search, SlidersHorizontal, X } from 'lucide-react'
 import { useLanguage } from '@/components/providers/language-provider'
 import { useStore } from '@/components/providers/store-provider'
 import { ProductCard } from '@/components/store/product-card'
+import type { Category, Product } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -20,14 +21,24 @@ import { Switch } from '@/components/ui/switch'
 
 type Sort = 'newest' | 'priceAsc' | 'priceDesc'
 
-export function ProductsCatalog() {
+export function ProductsCatalog({
+  initialCategory,
+  initialProducts,
+  initialCategories,
+}: {
+  initialCategory?: string
+  initialProducts?: Product[]
+  initialCategories?: Category[]
+}) {
   const { t, tf } = useLanguage()
-  const { products, categories } = useStore()
+  const store = useStore()
+  const products = initialProducts ?? store.products
+  const categories = initialCategories ?? store.categories
   const params = useSearchParams()
 
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState<string>(
-    () => params.get('categorie') ?? 'all',
+    () => initialCategory ?? params.get('categorie') ?? 'all',
   )
   const [sort, setSort] = useState<Sort>('newest')
   const [onlyPromo, setOnlyPromo] = useState(() => params.get('promo') === '1')
@@ -70,6 +81,7 @@ export function ProductsCatalog() {
 
   const isFiltered =
     search !== '' || category !== 'all' || sort !== 'newest' || onlyPromo
+  const selectedCategory = categories.find((item) => item.slug === category)
 
   const reset = () => {
     setSearch('')
@@ -79,12 +91,13 @@ export function ProductsCatalog() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-10 lg:px-8">
-  <header className="mb-4 sm:mb-8">
-    <h1 className="font-serif text-2xl font-bold text-foreground sm:text-3xl lg:text-4xl">
-      {t('products.title')}
-    </h1>
-  </header>
+    <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      <header className="mb-8">
+        <h1 className="font-serif text-3xl font-bold text-foreground sm:text-4xl">
+          {selectedCategory ? tf(selectedCategory.name) : t('products.title')}
+        </h1>
+        <p className="mt-1 text-muted-foreground">{t('products.subtitle')}</p>
+      </header>
 
   <div className="grid gap-4 lg:grid-cols-[240px_1fr] lg:gap-8">
     <aside className="flex items-end gap-2 lg:sticky lg:top-20 lg:block lg:h-fit lg:space-y-6">
@@ -159,6 +172,6 @@ export function ProductsCatalog() {
           )}
         </div>
       </div>
-    </div>
+    </section>
   )
 }

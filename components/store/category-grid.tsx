@@ -26,7 +26,7 @@ export function CategoryGrid() {
           return (
             <Link
               key={c.id}
-              href={`/produits?categorie=${c.slug}`}
+              href={`/categories/${encodeURIComponent(c.slug)}`}
               className="group relative aspect-4/3 overflow-hidden rounded-xl bg-muted"
             >
               <Image

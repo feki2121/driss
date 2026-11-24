@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
       const finalPrice = product.promoPrice ?? product.price;
 
       const productUrl =
-        `${siteUrl.replace(/\/$/, "")}/product/${encodeURIComponent(product.id)}`;
+        `${siteUrl.replace(/\/$/, "")}/produits/${encodeURIComponent(product.id)}`;
 
       return [[
         product.id,

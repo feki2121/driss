@@ -178,7 +178,7 @@ export function ProductDetail({
                       content_name: tf(product.name),
                       contents: [{ id: product.id, quantity: qty, item_price: unitPrice }],
                       value: unitPrice * qty,
-                      currency,          // ← était 'DZD'
+                      currency,          // ← était 'TND'
                       num_items: qty,
                     })
                     router.push(`/commande?produit=${product.id}&quantite=${qty}`)

@@ -87,7 +87,7 @@ export async function PATCH(
           userAgent: updated.metaUserAgent,
 
           value: Number(updated.total),
-          currency: settings?.currency ?? 'DZD',
+          currency: settings?.currency ?? 'TND',
 
           productIds: updated.items.map(
             (item) => item.productId

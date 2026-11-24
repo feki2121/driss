@@ -53,7 +53,7 @@ const EMPTY_SETTINGS: StoreSettings = {
   deliveryFee: 0,
   freeDeliveryThreshold: null,
   whatsapp: '',
-  currency: 'DZD',
+  currency: 'TND',
 }
 
 const StoreContext = createContext<StoreContextValue | null>(null)

@@ -6,7 +6,10 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 function csv(value: unknown): string {
-  const text = String(value ?? "");
+  const text = String(value ?? "")
+    .replace(/\r?\n|\r/g, " ")   // ← supprime les retours à la ligne
+    .replace(/\s+/g, " ")         // ← normalise les espaces multiples
+    .trim();
   return `"${text.replace(/"/g, '""')}"`;
 }
 
@@ -50,7 +53,7 @@ export async function GET(request: NextRequest) {
       prisma.storeSettings.findFirst(),
     ]);
 
-    const currency = settings?.currency || "DZD";
+    const currency = settings?.currency || "TND";
 
     const headers = [
       "id",
